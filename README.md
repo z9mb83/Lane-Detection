@@ -5,10 +5,13 @@ A complete lane detection system using deep learning with PyTorch. This project 
 ## Features
 
 - **Automatic Dataset Preparation**: Downloads or generates synthetic lane detection data
+- **Video Dataset Support**: NEW! Train on video sequences (5-20 frame clips) for temporal consistency
 - **Deep Learning Model**: U-Net with ResNet-18 encoder for lane segmentation
+- **Temporal Processing**: Frame stacking for video mode, enabling better lane continuity
 - **Data Augmentation**: Using albumentations for robust training
 - **Post-Processing**: Polynomial fitting for smooth lane detection
 - **Inference**: Functions for image and video lane detection with overlay
+- **Real-time Webcam**: Live lane detection on webcam feed
 - **Visualizations**: Training curves, predictions, and results
 
 ## Project Structure
@@ -25,8 +28,12 @@ lane_detection_project/
 ├── models/                 # Saved model checkpoints
 ├── notebooks/              # Additional notebooks (if any)
 ├── src/                    # Source code modules
-│   └── dataset_handler.py  # Dataset preparation script
-├── lane_detection.ipynb    # Main Jupyter notebook (run this!)
+│   ├── dataset_handler.py  # Image dataset preparation
+│   ├── video_dataset_generator.py  # Video dataset generation
+│   └── video_dataset.py    # Video dataset PyTorch classes
+├── lane_detection.ipynb    # Main Jupyter notebook (image mode)
+├── lane_detection_video.ipynb  # Video mode notebook (NEW!)
+├── train.py                # Standalone training script
 ├── requirements.txt        # Python dependencies
 └── README.md               # This file
 ```
@@ -69,9 +76,41 @@ Then **Run All Cells** in the notebook to:
 3. Evaluate and visualize results
 4. Run inference demo on sample images/video
 
-### Step-by-Step Manual Execution
+### Video Mode (NEW!)
 
-If you prefer to run components separately:
+For video-based training with temporal information:
+
+```bash
+jupyter notebook lane_detection_video.ipynb
+```
+
+Set `VIDEO_MODE = True` in the notebook to enable:
+- **Video Dataset**: 50 clips with 20 frames each (1000 total frames)
+- **Sequence Length**: 5 consecutive frames per sample
+- **Temporal Processing**: Frame stacking for better continuity
+- **Video Inference**: Process video files or webcam in real-time
+
+**Notebook Sections:**
+1. Section 0: Set `VIDEO_MODE = True` and `SEQUENCE_LENGTH = 5`
+2. Section 2: Generate video dataset (50 clips, 20 frames each)
+3. Section 3-9: Train with video sequences
+4. Section 10-11: Video inference with smooth lane overlays
+5. Section 12: Webcam inference (optional)
+
+### Video Inference API
+
+```python
+from lane_detection_video import VideoLaneDetector, process_video_file
+
+# Initialize detector
+detector = VideoLaneDetector(model, DEVICE, sequence_length=5)
+
+# Process video file
+process_video_file(model, "input.mp4", "output.mp4", DEVICE)
+
+# Or process frame by frame
+result, mask = detector.process_frame(frame)
+```
 
 #### 1. Prepare Dataset
 ```bash
@@ -145,16 +184,26 @@ After running the notebook, the following files are generated:
 - `lane_detection_result.png` - Sample detection result
 - `output_lanes.jpg` - Output image with detected lanes
 - `output_video.mp4` - Demo video with lane detection overlay
-- `sample_data.png` - Dataset sample visualization
+- `models/best_video_model.pth` - Best trained video model (NEW!)
+- `video_training_curves.png` - Video training metrics (NEW!)
+- `video_output.mp4` - Video inference result with lanes (NEW!)
+- `video_sample.png` - Video sequence visualization (NEW!)
 
 ## Dataset
 
-The project attempts to download the TuSimple lane detection dataset. If unavailable, it automatically generates synthetic lane data with:
+The project automatically generates synthetic datasets:
+
+### Image Dataset
+- 200 synthetic lane images (160 train, 40 val)
 - Road backgrounds with realistic textures
 - Left and right lane markings
 - Perspective effects (lanes converge at horizon)
-- Various lane curves and positions
-- 200 samples (80% train, 20% validation)
+
+### Video Dataset (NEW!)
+- 50 video clips with 20 frames each (1000 total frames)
+- TuSimple-like format with JSON labels
+- Sequential frames for temporal training
+- 80% train, 20% validation split
 
 To use a real dataset, place images in `data/train/images/` and masks in `data/train/masks/` (and corresponding val folders).
 
