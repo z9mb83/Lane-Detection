@@ -184,10 +184,10 @@ After running the notebook, the following files are generated:
 - `lane_detection_result.png` - Sample detection result
 - `output_lanes.jpg` - Output image with detected lanes
 - `output_video.mp4` - Demo video with lane detection overlay
-- `models/best_video_model.pth` - Best trained video model (NEW!)
-- `video_training_curves.png` - Video training metrics (NEW!)
-- `video_output.mp4` - Video inference result with lanes (NEW!)
-- `video_sample.png` - Video sequence visualization (NEW!)
+- `models/best_video_model.pth` - Video trained model (NEW!)
+- `models/best_realworld_model.pth` - Fine-tuned real-world model (NEW!)
+- `video_training_curves.png` - Training metrics (NEW!)
+- `video_output.mp4` / `kaggle_output_final.mp4` - Video inference results (NEW!)
 
 ## Dataset
 
@@ -203,7 +203,12 @@ The project automatically generates synthetic datasets:
 - 50 video clips with 20 frames each (1000 total frames)
 - TuSimple-like format with JSON labels
 - Sequential frames for temporal training
-- 80% train, 20% validation split
+
+### Real-World Fine-Tuning (NEW!)
+- Kaggle video frames with improved pseudo-labels
+- Color-based lane detection (white/yellow)
+- Polynomial fitting for smooth lane curves
+- 591 real-world samples for domain adaptation
 
 To use a real dataset, place images in `data/train/images/` and masks in `data/train/masks/` (and corresponding val folders).
 
@@ -226,6 +231,11 @@ Smoothed lane lines overlaid on image
 Typical results on synthetic data after 15 epochs:
 - **Validation IoU**: 0.70-0.85
 - **Validation Accuracy**: 0.95-0.98
+
+### Video Model (NEW!)
+- **Best Val IoU**: 0.73-0.79
+- **Kaggle Video IoU**: 38% (after fine-tuning)
+- Improved from 15% baseline with real-world adaptation
 
 Results on real datasets (TuSimple/CULane) would be higher with proper training.
 
