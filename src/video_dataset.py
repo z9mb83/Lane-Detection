@@ -151,7 +151,11 @@ class VideoLaneDataset(Dataset):
         # Stack frames: [sequence_length, C, H, W]
         frames_tensor = torch.stack(frames_list)
         
-        if not isinstance(mask, torch.Tensor):
+        # Ensure mask has channel dimension [1, H, W]
+        if isinstance(mask, torch.Tensor):
+            if mask.dim() == 2:
+                mask = mask.unsqueeze(0)
+        else:
             mask = torch.from_numpy(mask).unsqueeze(0)
         
         return frames_tensor, mask
