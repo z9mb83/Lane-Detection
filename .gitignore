@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Data
+data/
+!data/.gitkeep
+
+# Models
+models/*.pth
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Outputs
+*.png
+*.jpg
+*.mp4
+*.avi
+output_*
+training_curves.png
+predictions_comparison.png
+lane_detection_result.png
+sample_data.png
